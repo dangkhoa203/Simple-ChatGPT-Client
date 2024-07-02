@@ -1,0 +1,112 @@
+﻿using Krypton.Toolkit;
+using OpenAI_API;
+using OpenAI_API.Chat;
+using OpenAI_API.Models;
+using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using WindowsFormsApp1.data;
+using WindowsFormsApp1.model;
+using WindowsFormsApp1.services;
+using static System.Net.Mime.MediaTypeNames;
+namespace WindowsFormsApp1
+{
+    public partial class ChatPage : UserControl
+    {
+        int running = 0;
+        public historywork historywork;
+        public OpenAIAPI openAiApi;
+        public Conversation chat;
+        public HistoryPage historypage;
+        public ChatPage()
+        {
+            InitializeComponent();
+        }
+        public void createchat()
+        {
+            try
+            {
+                chat = openAiApi.Chat.CreateConversation();
+                chat.Model = Model.ChatGPTTurbo;
+                chat.RequestParameters.Temperature = 1;
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("Error", e.Message, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+        public void ChatboxAppend(string text, Color color)
+        {
+            chatbox.SelectionStart = chatbox.TextLength;
+            chatbox.SelectionLength = 0;
+            chatbox.SelectionColor = color;
+            chatbox.AppendText(text);
+            chatbox.SelectionColor = chatbox.ForeColor;
+        }
+        private async void B_enterinput_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                progressBar1.Value = 20;
+                conversation tem = new conversation();
+                running = 1;
+                B_enterinput.Enabled = false;
+                string input = chatinput.Text;
+                ChatboxAppend($"\n\n({tem.TimeOfChat}) User: {input}", Color.White);
+                progressBar1.Value = 40;
+                chat.AppendUserInput(input);
+                chatbox.SelectionStart = chatbox.Text.Length;
+                chatbox.ScrollToCaret();
+                chatinput.Clear();
+                progressBar1.Value = 80;
+                var response = await chat.GetResponseFromChatbotAsync();
+                tem.TimeOfMessage = DateTime.Now;
+                ChatboxAppend($"\n\n({ tem.TimeOfMessage}) Bot: {response}", Color.Green);
+                B_enterinput.Enabled = true;
+                running = 0;
+                chatbox.SelectionStart = chatbox.Text.Length;
+                chatbox.ScrollToCaret();
+                tem.Prompt = input;
+                tem.Message = response;
+                historywork.add(tem);
+                DataAccess.SaveFile("data.txt", historywork.getHistory());
+                progressBar1.Value = 100;
+                historypage.updatecombobox(historywork.getHistory().Keys.ToList());
+                historypage.update();
+                await Task.Delay(500);
+                progressBar1.Value = 0;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"({DateTime.Now}) Error: {ex.Message}","Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                ChatboxAppend($"\n\n({DateTime.Now})Error: {ex.Message}", Color.Red);
+            }
+            finally
+            {
+                B_enterinput.Enabled = true;
+                running = 0;
+                progressBar1.Value = 0;
+            }
+        }
+
+        private void chatinput_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (running == 0)
+            {
+                if (e.KeyChar == (char)Keys.Return)
+                {
+                    B_enterinput_Click(sender, e);
+                }
+            }
+
+        }
+    }
+}
