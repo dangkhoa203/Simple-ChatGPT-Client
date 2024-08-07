@@ -12,18 +12,18 @@ namespace WindowsFormsApp1.data
     [Serializable]
     public class DataAccess
     {
-        public static Dictionary<string, LinkedList<conversation>> LoadFile(string filename)
+        public static Dictionary<string, LinkedList<ConversationModel>> LoadFile(string filename)
         {
             try
             {
-                Dictionary<string, LinkedList<conversation>> tem = new Dictionary<string, LinkedList<conversation>>();
+                Dictionary<string, LinkedList<ConversationModel>> tem = new Dictionary<string, LinkedList<ConversationModel>>();
                 if (!File.Exists(filename))
                 {
                     return tem;
                 }
                 FileStream fs = new FileStream(filename, FileMode.Open);
                 BinaryFormatter bf = new BinaryFormatter();
-                tem = (Dictionary<string, LinkedList<conversation>>)bf.Deserialize(fs);
+                tem = (Dictionary<string, LinkedList<ConversationModel>>)bf.Deserialize(fs);
                 fs.Close();
                 return tem;
             }
@@ -32,7 +32,7 @@ namespace WindowsFormsApp1.data
                 return null;
             }
         }
-        public static bool SaveFile(string filename, Dictionary<string, LinkedList<conversation>> history)
+        public static bool SaveFile(string filename, Dictionary<string, LinkedList<ConversationModel>> history)
         {
             try
             {

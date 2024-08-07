@@ -7,18 +7,18 @@ using System.Threading.Tasks;
 namespace WindowsFormsApp1.model
 {
     [Serializable]
-    public class conversation
+    public class ConversationModel
     {
         private string prompt;
         private string message;
         private DateTime timeofdate;
         private DateTime timeofmess;
-        public conversation() {
+        public ConversationModel() {
         prompt = string.Empty;
         message = string.Empty;
         timeofdate = DateTime.Now;
         }
-        public conversation(string input,string output)
+        public ConversationModel(string input,string output)
         {
             this.prompt = input;
             this.message = output;

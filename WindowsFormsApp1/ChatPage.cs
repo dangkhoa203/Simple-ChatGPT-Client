@@ -22,7 +22,7 @@ namespace WindowsFormsApp1
     public partial class ChatPage : UserControl
     {
         int running = 0;
-        public historywork historywork;
+        public History History;
         public OpenAIAPI openAiApi;
         public Conversation chat;
         public HistoryPage historypage;
@@ -30,7 +30,7 @@ namespace WindowsFormsApp1
         {
             InitializeComponent();
         }
-        public void createchat()
+        public void Createchat()
         {
             try
             {
@@ -55,31 +55,36 @@ namespace WindowsFormsApp1
         {
             try
             {
-                progressBar1.Value = 20;
-                conversation tem = new conversation();
+                ConversationModel Temp = new ConversationModel();
                 running = 1;
                 B_enterinput.Enabled = false;
+
+                progressBar1.Value = 20;
                 string input = chatinput.Text;
-                ChatboxAppend($"\n\n({tem.TimeOfChat}) User: {input}", Color.White);
+                ChatboxAppend($"\n\n({Temp.TimeOfChat}) User: {input}", Color.White);
+
                 progressBar1.Value = 40;
                 chat.AppendUserInput(input);
                 chatbox.SelectionStart = chatbox.Text.Length;
                 chatbox.ScrollToCaret();
                 chatinput.Clear();
+
                 progressBar1.Value = 80;
                 var response = await chat.GetResponseFromChatbotAsync();
-                tem.TimeOfMessage = DateTime.Now;
-                ChatboxAppend($"\n\n({ tem.TimeOfMessage}) Bot: {response}", Color.Green);
+                Temp.TimeOfMessage = DateTime.Now;
+                ChatboxAppend($"\n\n({ Temp.TimeOfMessage}) Bot: {response}", Color.Green);
                 B_enterinput.Enabled = true;
                 running = 0;
                 chatbox.SelectionStart = chatbox.Text.Length;
                 chatbox.ScrollToCaret();
-                tem.Prompt = input;
-                tem.Message = response;
-                historywork.add(tem);
-                DataAccess.SaveFile("data.txt", historywork.getHistory());
+              
+
                 progressBar1.Value = 100;
-                historypage.updatecombobox(historywork.getHistory().Keys.ToList());
+                Temp.Prompt = input;
+                Temp.Message = response;
+                History.Add(Temp);
+                DataAccess.SaveFile("data.txt", History.getHistory());
+                historypage.updatecombobox(History.getHistory().Keys.ToList());
                 historypage.update();
                 await Task.Delay(500);
                 progressBar1.Value = 0;
