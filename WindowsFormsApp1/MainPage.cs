@@ -17,26 +17,26 @@ namespace WindowsFormsApp1
     public partial class MainPage : Form
     {
         private OpenAIAPI openAiApi;
-        private historywork historywork=new historywork();
-        public Main temp;
+        private readonly History History=new History();
+        public Main EnterPage;
         public MainPage(string apikey)
         {
             InitializeComponent();
             label1.Text = DateTime.Now.ToString("dd/MM/yyyy");
             openAiApi = new OpenAIAPI(apikey);
-            chatPage1.historywork = this.historywork;
+            chatPage1.History = this.History;
             chatPage1.openAiApi = this.openAiApi;
-            chatPage1.createchat();
-            if (historywork.find(DateTime.Now.Date.ToString("dd/MM/yyyy")) != null)
+            chatPage1.Createchat();
+            if (History.Find(DateTime.Now.Date.ToString("dd/MM/yyyy")) != null)
             {
-                foreach (conversation tem in historywork.find(DateTime.Now.Date.ToString("dd/MM/yyyy")))
+                foreach (ConversationModel tem in History.Find(DateTime.Now.Date.ToString("dd/MM/yyyy")))
                 {
                     chatPage1.ChatboxAppend("\n\n(" + tem.TimeOfChat + ") User: " + tem.Prompt, Color.White);
                     chatPage1.ChatboxAppend("\n\n(" + tem.TimeOfMessage + ") Bot: " + tem.Message, Color.Green);
                 }
             }
-            historyPage1.historywork = this.historywork;
-            historyPage1.updatecombobox(historywork.getHistory().Keys.ToList());
+            historyPage1.History = this.History;
+            historyPage1.updatecombobox(History.getHistory().Keys.ToList());
             chatPage1.historypage = historyPage1;
         }
 
@@ -73,7 +73,7 @@ namespace WindowsFormsApp1
 
         private void b_back_Click(object sender, EventArgs e)
         {
-            temp.Show();
+            EnterPage.Show();
             this.Close();
         }
     }

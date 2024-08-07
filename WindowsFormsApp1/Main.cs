@@ -36,7 +36,7 @@ namespace WindowsFormsApp1
                 {
                     this.Hide();
                     MainPage access = new MainPage(apikey.Text);
-                    access.temp = this;
+                    access.EnterPage = this;
                     access.ShowDialog();
                 }
                 else

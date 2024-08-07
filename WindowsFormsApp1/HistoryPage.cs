@@ -13,7 +13,7 @@ namespace WindowsFormsApp1
 {
     public partial class HistoryPage : UserControl
     {
-        public historywork historywork;
+        public History History;
         public HistoryPage()
         {
             InitializeComponent();
@@ -34,7 +34,7 @@ namespace WindowsFormsApp1
         public void update()
         {
             chatbox.Clear();
-            foreach (conversation tem in historywork.find(datebox.Text))
+            foreach (ConversationModel tem in History.Find(datebox.Text))
             {
                 ChatboxAppend("\n\n(" + tem.TimeOfChat + ") User: " + tem.Prompt, Color.White);
                 ChatboxAppend("\n\n(" + tem.TimeOfMessage + ") Bot: " + tem.Message, Color.Green);
